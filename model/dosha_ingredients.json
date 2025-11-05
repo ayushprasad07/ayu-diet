@@ -1,0 +1,48 @@
+{
+  "vata": {
+    "favor": [
+      "ghee",
+      "warm milk",
+      "cooked oats",
+      "almond",
+      "dates"
+    ],
+    "avoid": [
+      "raw salad",
+      "cold foods",
+      "crisp crackers"
+    ]
+  },
+  "pitta": {
+    "favor": [
+      "cucumber",
+      "melons",
+      "coconut",
+      "mint",
+      "dairy (cooling)"
+    ],
+    "avoid": [
+      "chili",
+      "hot spice",
+      "fried",
+      "garlic",
+      "onion"
+    ]
+  },
+  "kapha": {
+    "favor": [
+      "legumes",
+      "light grains",
+      "ginger",
+      "black pepper",
+      "green chili"
+    ],
+    "avoid": [
+      "dairy",
+      "ghee",
+      "oily",
+      "sweet",
+      "butter"
+    ]
+  }
+}

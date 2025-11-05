@@ -1,0 +1,44 @@
+import mongoose from 'mongoose';
+
+declare global {
+  var mongoose: { conn: any; promise: any } | undefined;
+}
+
+if (!process.env.MONGODB_URI) {
+  throw new Error('Please define the MONGODB_URI environment variable');
+}
+
+let cached = global.mongoose;
+
+if (!cached) {
+  cached = global.mongoose = { conn: null, promise: null };
+}
+
+async function dbConnect() {
+  const c = cached ?? (global.mongoose = { conn: null, promise: null });
+
+  if (c.conn) {
+    return c.conn;
+  }
+
+  if (!c.promise) {
+    const opts = {
+      bufferCommands: false,
+    };
+
+    c.promise = mongoose.connect(process.env.MONGODB_URI!, opts).then((mongoose) => {
+      return mongoose;
+    });
+  }
+
+  try {
+    c.conn = await c.promise;
+  } catch (e) {
+    c.promise = null;
+    throw e;
+  }
+
+  return c.conn;
+}
+
+export default dbConnect;
