@@ -286,364 +286,572 @@ export default function DoctorDashboard() {
   };
 
   if (status === 'loading') {
-    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
+        <div className="flex flex-col items-center space-y-4">
+          <div className="w-16 h-16 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
+          <p className="text-gray-600 font-medium">Loading...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">
-          Welcome, Dr. {session?.user?.name}
-        </h1>
-        <Button onClick={() => router.push('/api/auth/signout')}>
-          Logout
-        </Button>
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
+      {/* Subtle background decoration */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 left-0 w-96 h-96 bg-indigo-100 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
+        <div className="absolute top-0 right-0 w-96 h-96 bg-purple-100 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
+        <div className="absolute -bottom-8 left-20 w-96 h-96 bg-pink-100 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle>Your Patients</CardTitle>
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button>Create Patient</Button>
-                </DialogTrigger>
-                <DialogContent className="max-h-[90vh] overflow-y-auto">
-                  <DialogHeader>
-                    <DialogTitle>Create New Patient</DialogTitle>
-                  </DialogHeader>
-                  <form onSubmit={handleCreatePatient} className="space-y-4">
-                    <div>
-                      <Label htmlFor="patient-name">Full Name</Label>
-                      <Input
-                        id="patient-name"
-                        value={patientFormData.name}
-                        onChange={(e) =>
-                          setPatientFormData({ ...patientFormData, name: e.target.value })
-                        }
-                        required
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="patient-email">Email</Label>
-                      <Input
-                        id="patient-email"
-                        type="email"
-                        value={patientFormData.email}
-                        onChange={(e) =>
-                          setPatientFormData({ ...patientFormData, email: e.target.value })
-                        }
-                        required
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="patient-password">Password</Label>
-                      <Input
-                        id="patient-password"
-                        type="password"
-                        value={patientFormData.password}
-                        onChange={(e) =>
-                          setPatientFormData({ ...patientFormData, password: e.target.value })
-                        }
-                        required
-                      />
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
+      {/* Main content */}
+      <div className="relative z-10 container mx-auto px-4 py-8">
+        {/* Header */}
+        <div className="backdrop-blur-xl bg-white/40 border border-white/50 rounded-2xl shadow-xl p-6 mb-8 transform transition-all duration-300 hover:shadow-2xl">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div>
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                Welcome back, Dr. {session?.user?.name}
+              </h1>
+              <p className="text-gray-600 mt-1">Manage your patients and diet plans</p>
+            </div>
+            <Button 
+              onClick={() => router.push('/api/auth/signout')}
+              className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+            >
+              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+              </svg>
+              Logout
+            </Button>
+          </div>
+
+          {/* Stats cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+            <div className="backdrop-blur-md bg-gradient-to-br from-indigo-500/10 to-indigo-600/10 border border-indigo-200/50 rounded-xl p-4 transition-all duration-300 hover:scale-105">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600">Total Patients</p>
+                  <p className="text-3xl font-bold text-indigo-600">{patients.length}</p>
+                </div>
+                <div className="p-3 bg-indigo-100 rounded-xl">
+                  <svg className="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            <div className="backdrop-blur-md bg-gradient-to-br from-purple-500/10 to-purple-600/10 border border-purple-200/50 rounded-xl p-4 transition-all duration-300 hover:scale-105">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600">Diet Plans</p>
+                  <p className="text-3xl font-bold text-purple-600">{diets.length}</p>
+                </div>
+                <div className="p-3 bg-purple-100 rounded-xl">
+                  <svg className="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            <div className="backdrop-blur-md bg-gradient-to-br from-green-500/10 to-green-600/10 border border-green-200/50 rounded-xl p-4 transition-all duration-300 hover:scale-105">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600">Active Plans</p>
+                  <p className="text-3xl font-bold text-green-600">{patients.filter(p => p.dietPlan).length}</p>
+                </div>
+                <div className="p-3 bg-green-100 rounded-xl">
+                  <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Main grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Patients Card */}
+          <div className="backdrop-blur-xl bg-white/40 border border-white/50 rounded-2xl shadow-xl overflow-hidden transform transition-all duration-300 hover:shadow-2xl">
+            <div className="p-6 border-b border-white/50">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="p-2 bg-indigo-100 rounded-lg">
+                    <svg className="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                  </div>
+                  <h2 className="text-2xl font-bold text-gray-800">Your Patients</h2>
+                </div>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+                      <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                      </svg>
+                      Add Patient
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-h-[90vh] overflow-y-auto backdrop-blur-xl bg-white/95 border border-white/50">
+                    <DialogHeader>
+                      <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                        Create New Patient
+                      </DialogTitle>
+                    </DialogHeader>
+                    <form onSubmit={handleCreatePatient} className="space-y-4 mt-4">
                       <div>
-                        <Label htmlFor="patient-age">Age</Label>
+                        <Label htmlFor="patient-name" className="text-gray-700 font-medium">Full Name</Label>
                         <Input
-                          id="patient-age"
-                          type="number"
-                          value={patientFormData.age}
+                          id="patient-name"
+                          value={patientFormData.name}
                           onChange={(e) =>
-                            setPatientFormData({ ...patientFormData, age: e.target.value })
+                            setPatientFormData({ ...patientFormData, name: e.target.value })
                           }
+                          className="mt-1 bg-gray-50 border-gray-200 focus:border-indigo-500 focus:ring-indigo-500"
                           required
                         />
                       </div>
                       <div>
-                        <Label htmlFor="patient-gender">Gender</Label>
+                        <Label htmlFor="patient-email" className="text-gray-700 font-medium">Email</Label>
+                        <Input
+                          id="patient-email"
+                          type="email"
+                          value={patientFormData.email}
+                          onChange={(e) =>
+                            setPatientFormData({ ...patientFormData, email: e.target.value })
+                          }
+                          className="mt-1 bg-gray-50 border-gray-200 focus:border-indigo-500 focus:ring-indigo-500"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="patient-password" className="text-gray-700 font-medium">Password</Label>
+                        <Input
+                          id="patient-password"
+                          type="password"
+                          value={patientFormData.password}
+                          onChange={(e) =>
+                            setPatientFormData({ ...patientFormData, password: e.target.value })
+                          }
+                          className="mt-1 bg-gray-50 border-gray-200 focus:border-indigo-500 focus:ring-indigo-500"
+                          required
+                        />
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="patient-age" className="text-gray-700 font-medium">Age</Label>
+                          <Input
+                            id="patient-age"
+                            type="number"
+                            value={patientFormData.age}
+                            onChange={(e) =>
+                              setPatientFormData({ ...patientFormData, age: e.target.value })
+                            }
+                            className="mt-1 bg-gray-50 border-gray-200 focus:border-indigo-500 focus:ring-indigo-500"
+                            required
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="patient-gender" className="text-gray-700 font-medium">Gender</Label>
+                          <Select
+                            value={patientFormData.gender}
+                            onValueChange={(value) =>
+                              setPatientFormData({ ...patientFormData, gender: value })
+                            }
+                          >
+                            <SelectTrigger className="mt-1 bg-gray-50 border-gray-200">
+                              <SelectValue placeholder="Select gender" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="male">Male</SelectItem>
+                              <SelectItem value="female">Female</SelectItem>
+                              <SelectItem value="other">Other</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                      <div>
+                        <Label htmlFor="patient-dosha" className="text-gray-700 font-medium">Dosha Type</Label>
                         <Select
-                          value={patientFormData.gender}
+                          value={patientFormData.doshaType}
                           onValueChange={(value) =>
-                            setPatientFormData({ ...patientFormData, gender: value })
+                            setPatientFormData({ ...patientFormData, doshaType: value })
                           }
                         >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select gender" />
+                          <SelectTrigger className="mt-1 bg-gray-50 border-gray-200">
+                            <SelectValue placeholder="Select dosha type" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="male">Male</SelectItem>
-                            <SelectItem value="female">Female</SelectItem>
-                            <SelectItem value="other">Other</SelectItem>
+                            <SelectItem value="vata">Vata</SelectItem>
+                            <SelectItem value="pitta">Pitta</SelectItem>
+                            <SelectItem value="kapha">Kapha</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
-                    </div>
-                    <div>
-                      <Label htmlFor="patient-dosha">Dosha Type</Label>
-                      <Select
-                        value={patientFormData.doshaType}
-                        onValueChange={(value) =>
-                          setPatientFormData({ ...patientFormData, doshaType: value })
-                        }
+                      <div>
+                        <Label htmlFor="patient-avoid" className="text-gray-700 font-medium">Ingredients to Avoid (comma separated)</Label>
+                        <Input
+                          id="patient-avoid"
+                          value={patientFormData.avoidIngredients}
+                          onChange={(e) =>
+                            setPatientFormData({ ...patientFormData, avoidIngredients: e.target.value })
+                          }
+                          className="mt-1 bg-gray-50 border-gray-200 focus:border-indigo-500 focus:ring-indigo-500"
+                          placeholder="e.g., nuts, dairy, gluten"
+                        />
+                      </div>
+                      <Button 
+                        type="submit" 
+                        disabled={isCreatingPatient}
+                        className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
                       >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select dosha type" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="vata">Vata</SelectItem>
-                          <SelectItem value="pitta">Pitta</SelectItem>
-                          <SelectItem value="kapha">Kapha</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div>
-                      <Label htmlFor="patient-avoid">Ingredients to Avoid (comma separated)</Label>
-                      <Input
-                        id="patient-avoid"
-                        value={patientFormData.avoidIngredients}
-                        onChange={(e) =>
-                          setPatientFormData({ ...patientFormData, avoidIngredients: e.target.value })
-                        }
-                        placeholder="e.g., nuts, dairy, gluten"
-                      />
-                    </div>
-                    <Button type="submit" disabled={isCreatingPatient}>
-                      {isCreatingPatient ? 'Creating...' : 'Create Patient'}
-                    </Button>
-                  </form>
-                </DialogContent>
-              </Dialog>
+                        {isCreatingPatient ? 'Creating...' : 'Create Patient'}
+                      </Button>
+                    </form>
+                  </DialogContent>
+                </Dialog>
+              </div>
             </div>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
+
+            <div className="p-6 max-h-[600px] overflow-y-auto">
               {patients.length === 0 ? (
-                <p className="text-gray-500 text-center py-4">No patients yet</p>
-              ) : (
-                patients.map((patient) => (
-                  <div
-                    key={patient.id}
-                    className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer"
-                    onClick={() => fetchPatientDetails(patient.email)}
-                  >
-                    <div>
-                      <p className="font-medium">{patient.name}</p>
-                      <p className="text-sm text-gray-600">{patient.email}</p>
-                      {patient.doshaType && (
-                        <p className="text-xs text-gray-500">Dosha: {patient.doshaType}</p>
-                      )}
-                    </div>
-                    {patient.dietPlan && (
-                      <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
-                        Has Diet
-                      </span>
-                    )}
+                <div className="flex flex-col items-center justify-center py-12 text-center">
+                  <div className="p-4 bg-gray-100 rounded-full mb-4">
+                    <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
                   </div>
-                ))
-              )}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle>Diet Plans</CardTitle>
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button>Create Diet Plan</Button>
-                </DialogTrigger>
-                <DialogContent className="max-h-[90vh] overflow-y-auto">
-                  <DialogHeader>
-                    <DialogTitle>Create New Diet Plan</DialogTitle>
-                  </DialogHeader>
-                  <form onSubmit={handleCreateDiet} className="space-y-4">
-                    <div>
-                      <Label htmlFor="patient">Patient</Label>
-                      <Select
-                        value={selectedPatient}
-                        onValueChange={setSelectedPatient}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select patient" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {patients.map((patient) => (
-                            <SelectItem key={patient.id} value={patient.email}>
-                              {patient.name} ({patient.doshaType || 'N/A'})
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div>
-                      <Label htmlFor="diet-mode">Diet Creation Mode</Label>
-                      <Select
-                        value={dietMode}
-                        onValueChange={(value: 'manual' | 'generate') => setDietMode(value)}
-                      >
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="manual">Manual Entry</SelectItem>
-                          <SelectItem value="generate">Generate from Dosha</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    {dietMode === 'manual' && (
-                      <>
-                        <div className="grid grid-cols-2 gap-4">
-                          <div>
-                            <Label htmlFor="calories">Calories</Label>
-                            <Input
-                              id="calories"
-                              type="number"
-                              value={formData.calories}
-                              onChange={(e) =>
-                                setFormData({ ...formData, calories: e.target.value })
-                              }
-                              required
-                            />
-                          </div>
-                          <div>
-                            <Label htmlFor="protein">Protein (g)</Label>
-                            <Input
-                              id="protein"
-                              type="number"
-                              value={formData.protein}
-                              onChange={(e) =>
-                                setFormData({ ...formData, protein: e.target.value })
-                              }
-                              required
-                            />
-                          </div>
-                          <div>
-                            <Label htmlFor="carbs">Carbs (g)</Label>
-                            <Input
-                              id="carbs"
-                              type="number"
-                              value={formData.carbs}
-                              onChange={(e) =>
-                                setFormData({ ...formData, carbs: e.target.value })
-                              }
-                              required
-                            />
-                          </div>
-                          <div>
-                            <Label htmlFor="fat">Fat (g)</Label>
-                            <Input
-                              id="fat"
-                              type="number"
-                              value={formData.fat}
-                              onChange={(e) =>
-                                setFormData({ ...formData, fat: e.target.value })
-                              }
-                              required
-                            />
-                          </div>
-                        </div>
-
-                        <div>
-                          <Label htmlFor="healthCondition">Health Condition</Label>
-                          <Input
-                            id="healthCondition"
-                            value={formData.healthCondition}
-                            onChange={(e) =>
-                              setFormData({
-                                ...formData,
-                                healthCondition: e.target.value,
-                              })
-                            }
-                          />
-                        </div>
-                      </>
-                    )}
-
-                    {dietMode === 'generate' && (
-                      <div className="bg-blue-50 p-4 rounded">
-                        <p className="text-sm text-blue-800">
-                          Diet will be automatically generated based on the patient's Dosha type and avoid ingredients.
-                        </p>
-                      </div>
-                    )}
-
-                    <Button type="submit" disabled={isCreatingDiet}>
-                      {isCreatingDiet ? 'Creating...' : 'Create Diet Plan'}
-                    </Button>
-                  </form>
-                </DialogContent>
-              </Dialog>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {diets.length === 0 ? (
-                <p className="text-gray-500 text-center py-4">No diet plans yet</p>
+                  <p className="text-gray-500 font-medium">No patients yet</p>
+                  <p className="text-sm text-gray-400 mt-1">Create your first patient to get started</p>
+                </div>
               ) : (
-                diets.map((diet) => (
-                  <Card key={diet.id}>
-                    <CardContent className="p-4">
+                <div className="space-y-3">
+                  {patients.map((patient) => (
+                    <div
+                      key={patient.id}
+                      className="backdrop-blur-md bg-gradient-to-r from-white/60 to-white/40 border border-white/50 rounded-xl p-4 hover:shadow-lg cursor-pointer transition-all duration-300 transform hover:scale-[1.02] group"
+                      onClick={() => fetchPatientDetails(patient.email)}
+                    >
                       <div className="flex items-center justify-between">
-                        <div>
-                          <p className="font-medium">{diet.patientName}</p>
-                          <p className="text-sm text-gray-600">
-                            Created: {new Date(diet.createdAt).toLocaleDateString()}
-                          </p>
-                          {diet.calories && (
-                            <p className="text-xs text-gray-500 mt-1">
-                              {diet.calories} cal | {diet.protein}g protein | {diet.carbs}g carbs | {diet.fat}g fat
-                            </p>
-                          )}
+                        <div className="flex items-center space-x-3">
+                          <div className="p-2 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg">
+                            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            </svg>
+                          </div>
+                          <div>
+                            <p className="font-semibold text-gray-800 group-hover:text-indigo-600 transition-colors">{patient.name}</p>
+                            <p className="text-sm text-gray-600">{patient.email}</p>
+                            {patient.doshaType && (
+                              <span className="inline-block mt-1 text-xs bg-indigo-100 text-indigo-700 px-2 py-1 rounded-full">
+                                {patient.doshaType}
+                              </span>
+                            )}
+                          </div>
                         </div>
+                        {patient.dietPlan && (
+                          <div className="flex items-center space-x-1 bg-green-100 text-green-700 px-3 py-1 rounded-full">
+                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                            </svg>
+                            <span className="text-xs font-medium">Active</span>
+                          </div>
+                        )}
                       </div>
-                    </CardContent>
-                  </Card>
-                ))
+                    </div>
+                  ))}
+                </div>
               )}
             </div>
-          </CardContent>
-        </Card>
+          </div>
+
+          {/* Diet Plans Card */}
+          <div className="backdrop-blur-xl bg-white/40 border border-white/50 rounded-2xl shadow-xl overflow-hidden transform transition-all duration-300 hover:shadow-2xl">
+            <div className="p-6 border-b border-white/50">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="p-2 bg-purple-100 rounded-lg">
+                    <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                    </svg>
+                  </div>
+                  <h2 className="text-2xl font-bold text-gray-800">Diet Plans</h2>
+                </div>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+                      <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                      </svg>
+                      Create Plan
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-h-[90vh] overflow-y-auto backdrop-blur-xl bg-white/95 border border-white/50">
+                    <DialogHeader>
+                      <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                        Create New Diet Plan
+                      </DialogTitle>
+                    </DialogHeader>
+                    <form onSubmit={handleCreateDiet} className="space-y-4 mt-4">
+                      <div>
+                        <Label htmlFor="patient" className="text-gray-700 font-medium">Patient</Label>
+                        <Select
+                          value={selectedPatient}
+                          onValueChange={setSelectedPatient}
+                        >
+                          <SelectTrigger className="mt-1 bg-gray-50 border-gray-200">
+                            <SelectValue placeholder="Select patient" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {patients.map((patient) => (
+                              <SelectItem key={patient.id} value={patient.email}>
+                                {patient.name} ({patient.doshaType || 'N/A'})
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div>
+                        <Label htmlFor="diet-mode" className="text-gray-700 font-medium">Diet Creation Mode</Label>
+                        <Select
+                          value={dietMode}
+                          onValueChange={(value: 'manual' | 'generate') => setDietMode(value)}
+                        >
+                          <SelectTrigger className="mt-1 bg-gray-50 border-gray-200">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="manual">Manual Entry</SelectItem>
+                            <SelectItem value="generate">Generate from Dosha</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      {dietMode === 'manual' && (
+                        <>
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <Label htmlFor="calories" className="text-gray-700 font-medium">Calories</Label>
+                              <Input
+                                id="calories"
+                                type="number"
+                                value={formData.calories}
+                                onChange={(e) =>
+                                  setFormData({ ...formData, calories: e.target.value })
+                                }
+                                className="mt-1 bg-gray-50 border-gray-200 focus:border-purple-500 focus:ring-purple-500"
+                                required
+                              />
+                            </div>
+                            <div>
+                              <Label htmlFor="protein" className="text-gray-700 font-medium">Protein (g)</Label>
+                              <Input
+                                id="protein"
+                                type="number"
+                                value={formData.protein}
+                                onChange={(e) =>
+                                  setFormData({ ...formData, protein: e.target.value })
+                                }
+                                className="mt-1 bg-gray-50 border-gray-200 focus:border-purple-500 focus:ring-purple-500"
+                                required
+                              />
+                            </div>
+                            <div>
+                              <Label htmlFor="carbs" className="text-gray-700 font-medium">Carbs (g)</Label>
+                              <Input
+                                id="carbs"
+                                type="number"
+                                value={formData.carbs}
+                                onChange={(e) =>
+                                  setFormData({ ...formData, carbs: e.target.value })
+                                }
+                                className="mt-1 bg-gray-50 border-gray-200 focus:border-purple-500 focus:ring-purple-500"
+                                required
+                              />
+                            </div>
+                            <div>
+                              <Label htmlFor="fat" className="text-gray-700 font-medium">Fat (g)</Label>
+                              <Input
+                                id="fat"
+                                type="number"
+                                value={formData.fat}
+                                onChange={(e) =>
+                                  setFormData({ ...formData, fat: e.target.value })
+                                }
+                                className="mt-1 bg-gray-50 border-gray-200 focus:border-purple-500 focus:ring-purple-500"
+                                required
+                              />
+                            </div>
+                          </div>
+
+                          <div>
+                            <Label htmlFor="healthCondition" className="text-gray-700 font-medium">Health Condition</Label>
+                            <Input
+                              id="healthCondition"
+                              value={formData.healthCondition}
+                              onChange={(e) =>
+                                setFormData({
+                                  ...formData,
+                                  healthCondition: e.target.value,
+                                })
+                              }
+                              className="mt-1 bg-gray-50 border-gray-200 focus:border-purple-500 focus:ring-purple-500"
+                            />
+                          </div>
+                        </>
+                      )}
+
+                      {dietMode === 'generate' && (
+                        <div className="backdrop-blur-md bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 p-4 rounded-xl">
+                          <div className="flex items-start space-x-3">
+                            <svg className="w-5 h-5 text-blue-600 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                            </svg>
+                            <p className="text-sm text-blue-800">
+                              Diet will be automatically generated based on the patient's Dosha type and avoid ingredients.
+                            </p>
+                          </div>
+                        </div>
+                      )}
+
+                      <Button 
+                        type="submit" 
+                        disabled={isCreatingDiet}
+                        className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+                      >
+                        {isCreatingDiet ? 'Creating...' : 'Create Diet Plan'}
+                      </Button>
+                    </form>
+                  </DialogContent>
+                </Dialog>
+              </div>
+            </div>
+
+            <div className="p-6 max-h-[600px] overflow-y-auto">
+              {diets.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-12 text-center">
+                  <div className="p-4 bg-gray-100 rounded-full mb-4">
+                    <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                    </svg>
+                  </div>
+                  <p className="text-gray-500 font-medium">No diet plans yet</p>
+                  <p className="text-sm text-gray-400 mt-1">Create a diet plan for your patients</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {diets.map((diet) => (
+                    <div
+                      key={diet.id}
+                      className="backdrop-blur-md bg-gradient-to-r from-white/60 to-white/40 border border-white/50 rounded-xl p-4 hover:shadow-lg transition-all duration-300 transform hover:scale-[1.02]"
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-start space-x-3">
+                          <div className="p-2 bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg mt-1">
+                            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                          </div>
+                          <div>
+                            <p className="font-semibold text-gray-800">{diet.patientName}</p>
+                            <p className="text-sm text-gray-600">
+                              Created: {new Date(diet.createdAt).toLocaleDateString()}
+                            </p>
+                            {diet.calories && (
+                              <div className="flex flex-wrap gap-2 mt-2">
+                                <span className="text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded-full">
+                                  {diet.calories} cal
+                                </span>
+                                <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">
+                                  {diet.protein}g protein
+                                </span>
+                                <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full">
+                                  {diet.carbs}g carbs
+                                </span>
+                                <span className="text-xs bg-red-100 text-red-700 px-2 py-1 rounded-full">
+                                  {diet.fat}g fat
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Patient Details Dialog */}
       {showPatientDetails && selectedPatientDetails && (
         <Dialog open={showPatientDetails} onOpenChange={setShowPatientDetails}>
-          <DialogContent className="max-h-[90vh] overflow-y-auto">
+          <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto backdrop-blur-xl bg-white/95 border border-white/50">
             <DialogHeader>
-              <DialogTitle>Patient Details - {selectedPatientDetails.name}</DialogTitle>
+              <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                Patient Details - {selectedPatientDetails.name}
+              </DialogTitle>
             </DialogHeader>
-            <div className="space-y-4">
-              <div>
-                <p className="font-semibold">Email:</p>
-                <p>{selectedPatientDetails.email}</p>
+            <div className="space-y-6 mt-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="backdrop-blur-md bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-200/50 rounded-xl p-4">
+                  <p className="text-sm text-gray-600 mb-1">Email</p>
+                  <p className="font-semibold text-gray-800">{selectedPatientDetails.email}</p>
+                </div>
+                <div className="backdrop-blur-md bg-gradient-to-br from-purple-50 to-pink-50 border border-purple-200/50 rounded-xl p-4">
+                  <p className="text-sm text-gray-600 mb-1">Dosha Type</p>
+                  <p className="font-semibold text-gray-800">{selectedPatientDetails.doshaType || 'N/A'}</p>
+                </div>
               </div>
-              <div>
-                <p className="font-semibold">Dosha Type:</p>
-                <p>{selectedPatientDetails.doshaType || 'N/A'}</p>
-              </div>
+
               {selectedPatientDetails.dietPlan && (
                 <div>
-                  <p className="font-semibold mb-2">Current Diet Plan:</p>
-                  <div className="bg-gray-50 p-4 rounded max-h-96 overflow-y-auto">
+                  <h3 className="text-lg font-bold text-gray-800 mb-3 flex items-center">
+                    <svg className="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    Current Diet Plan
+                  </h3>
+                  <div className="backdrop-blur-md bg-gradient-to-br from-gray-50 to-white border border-gray-200 rounded-xl p-6 max-h-96 overflow-y-auto">
                     {selectedPatientDetails.dietPlan.type === 'manual' ? (
-                      <>
-                        <p className="mb-2"><strong>Type:</strong> Manual Entry</p>
-                        <p>Calories: {selectedPatientDetails.dietPlan.calories}</p>
-                        <p>Protein: {selectedPatientDetails.dietPlan.protein}g</p>
-                        <p>Carbs: {selectedPatientDetails.dietPlan.carbs}g</p>
-                        <p>Fat: {selectedPatientDetails.dietPlan.fat}g</p>
+                      <div className="space-y-3">
+                        <div className="flex items-center space-x-2">
+                          <span className="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-sm font-medium">Manual Entry</span>
+                        </div>
+                        <div className="grid grid-cols-2 gap-3 mt-4">
+                          <div className="bg-orange-50 border border-orange-200 rounded-lg p-3">
+                            <p className="text-xs text-gray-600">Calories</p>
+                            <p className="text-xl font-bold text-orange-600">{selectedPatientDetails.dietPlan.calories}</p>
+                          </div>
+                          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                            <p className="text-xs text-gray-600">Protein</p>
+                            <p className="text-xl font-bold text-blue-600">{selectedPatientDetails.dietPlan.protein}g</p>
+                          </div>
+                          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                            <p className="text-xs text-gray-600">Carbs</p>
+                            <p className="text-xl font-bold text-yellow-600">{selectedPatientDetails.dietPlan.carbs}g</p>
+                          </div>
+                          <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                            <p className="text-xs text-gray-600">Fat</p>
+                            <p className="text-xl font-bold text-red-600">{selectedPatientDetails.dietPlan.fat}g</p>
+                          </div>
+                        </div>
                         {selectedPatientDetails.dietPlan.healthCondition && (
-                          <p>Health Condition: {selectedPatientDetails.dietPlan.healthCondition}</p>
+                          <div className="mt-4 p-3 bg-purple-50 border border-purple-200 rounded-lg">
+                            <p className="text-xs text-gray-600">Health Condition</p>
+                            <p className="font-medium text-gray-800">{selectedPatientDetails.dietPlan.healthCondition}</p>
+                          </div>
                         )}
-                      </>
+                      </div>
                     ) : (
-                      <div className="whitespace-pre-wrap font-mono text-sm">
+                      <div className="whitespace-pre-wrap font-mono text-sm text-gray-700 leading-relaxed">
                         {formatDietPlan(selectedPatientDetails.dietPlan) || 'Unable to format diet plan'}
                       </div>
                     )}
@@ -651,12 +859,36 @@ export default function DoctorDashboard() {
                 </div>
               )}
               {!selectedPatientDetails.dietPlan && (
-                <p className="text-gray-500">No diet plan created yet</p>
+                <div className="text-center py-8">
+                  <div className="inline-block p-4 bg-gray-100 rounded-full mb-3">
+                    <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                  </div>
+                  <p className="text-gray-500 font-medium">No diet plan created yet</p>
+                </div>
               )}
             </div>
           </DialogContent>
         </Dialog>
       )}
+
+      <style jsx>{`
+        @keyframes blob {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          33% { transform: translate(30px, -50px) scale(1.1); }
+          66% { transform: translate(-20px, 20px) scale(0.9); }
+        }
+        .animate-blob {
+          animation: blob 7s infinite;
+        }
+        .animation-delay-2000 {
+          animation-delay: 2s;
+        }
+        .animation-delay-4000 {
+          animation-delay: 4s;
+        }
+      `}</style>
     </div>
   );
 }
