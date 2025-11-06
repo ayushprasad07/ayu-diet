@@ -97,22 +97,7 @@ export default function LandingPage() {
                 Learn More
               </button>
             </div>
-            <div className="flex items-center space-x-8 pt-4">
-              <div>
-                <p className="text-3xl font-bold text-gray-900">500+</p>
-                <p className="text-sm text-gray-600">Happy Patients</p>
-              </div>
-              <div className="h-12 w-px bg-gray-300"></div>
-              <div>
-                <p className="text-3xl font-bold text-gray-900">50+</p>
-                <p className="text-sm text-gray-600">Expert Doctors</p>
-              </div>
-              <div className="h-12 w-px bg-gray-300"></div>
-              <div>
-                <p className="text-3xl font-bold text-gray-900">95%</p>
-                <p className="text-sm text-gray-600">Success Rate</p>
-              </div>
-            </div>
+            
           </div>
           <div className="relative">
             <div className="backdrop-blur-xl bg-white/40 border border-white/50 rounded-3xl shadow-2xl p-8 transform hover:scale-105 transition-all duration-300">
